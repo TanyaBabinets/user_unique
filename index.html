@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<form id="myForm">
+    <label for="login">ENTER your LOGIN:</label>
+    <input type="text" id="login" name="login" required><br>
+    <span id="loginError" style="color:red;"></span><br>
+    <label for="email">ENTER your EMAIL:</label>
+    <input type="text" id="email" name="email" required>
+    <br>
+    <button type="submit">Register</button><br>
+    <span id="successMessage" style="color:white; font-size:24px"></span>
+</form>
+
+<script>
+    $(document).ready(function () {
+        $("#login").on('input', function () {
+            var login = $(this).val();
+
+            $.ajax({
+                url: 'reg.php',
+                type: 'POST',
+                data: {login: login, check_login: true },
+                success: function (response) {
+
+                    if (response === "This login already exists") {
+                        $('#loginError').text(response);
+                    } else {
+                        $('#loginError').text("");
+                    }
+                },
+
+                    error: function () {
+                        $('#loginError').text("Error");
+                    }
+            });
+        });
+
+        $('#myForm').on('submit', function (event) {
+            event.preventDefault();
+
+            var login = $('#login').val();
+            var email = $('#email').val();
+            $.ajax({
+                url: 'reg.php',
+                type: 'POST',
+                data: {login: login, email: email},
+                success: function (response) {
+
+                    alert(response);
+                    if (response.includes("User added")) {
+                        $('#myForm')[0].reset();
+                        $('#successMessage').text("User successfully registered!");
+                    }
+                },
+        });
+    });
+    });
+</script>
+</body>
+</html>
